@@ -8,6 +8,7 @@ const ejs = require("ejs");
 const { User } = require("./models/user");
 
 const session = require("express-session");
+const MongoDBStore = require("connect-mongodb-session")(session);
 const passport = require("passport");
 // const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
@@ -22,11 +23,17 @@ app.use(
   })
 );
 
+const store = new MongoDBStore({
+  uri: "mongodb://localhost:27017/SecretsPassportDB",
+  collection: "mySessions",
+});
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    store: store,
   })
 );
 
