@@ -24,8 +24,8 @@ app.use(
 );
 
 const store = new MongoDBStore({
-  uri: "mongodb://localhost:27017/SecretsPassportDB",
-  collection: "mySessions",
+  uri: process.env.LOCAL_URL,
+  collection: process.env.SESSION_COLLECTION,
 });
 
 app.use(
