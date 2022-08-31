@@ -88,15 +88,18 @@ app.get("/register", function (req, res) {
 
 app.get("/secrets", function (req, res) {
   if (req.isAuthenticated()) {
-    User.find({ secret: { $ne: null } }, function (err, foundUsers) {
-      if (err) {
-        console.log(err);
-      } else {
-        if (foundUsers) {
-          res.render("secrets", { usersWithSecrets: foundUsers });
+    User.find(
+      { secrets: { $exists: true, $not: { $size: 0 } } },
+      function (err, foundUsers) {
+        if (err) {
+          console.log(err);
+        } else {
+          if (foundUsers) {
+            res.render("secrets", { usersWithSecrets: foundUsers });
+          }
         }
       }
-    });
+    );
   } else {
     res.redirect("/login");
   }
@@ -110,26 +113,24 @@ app.get("/submit", function (req, res) {
   }
 });
 
-app.post("/submit", function (req, res) {
-  const submittedSecret = req.body.secret;
-
-  //Once the user is authenticated and their session gets saved, their user details are saved to req.user.
-  User.findById(req.user.id, function (err, foundUser) {
-    if (err) {
-      console.log(err);
-    } else {
-      if (foundUser) {
-        foundUser.secret = submittedSecret;
-        foundUser.save(function () {
-          res.redirect("/secrets");
-        });
-      }
+app.post("/submit", async function (req, res) {
+  try {
+    //Once the user is authenticated and their session gets saved, their user details are saved to req.user.
+    const submittedSecret = req.body.secret;
+    let foundUser = await User.getUserById(req.user.id);
+    if (foundUser) {
+      foundUser.secrets.push(submittedSecret);
+      foundUser.save(function () {
+        res.redirect("/secrets");
+      });
     }
-  });
+  } catch (err) {
+    console.log("submit error: ", err);
+    redirect("/");
+  }
 });
 
 app.get("/logout", function (req, res) {
-  console.log(req.logOut);
   req.logout();
   res.redirect("/");
 });

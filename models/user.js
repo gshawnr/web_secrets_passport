@@ -7,10 +7,21 @@ const userSchema = {
   email: String,
   password: String,
   googleId: String,
-  secret: String,
+  secrets: [String],
 };
 
-exports.User = createModel("user", userSchema, [
+const User = createModel("user", userSchema, [
   passportLocalMongoose,
   findOrCreate,
 ]);
+
+User.getUserById = async (id) => {
+  try {
+    const foundUser = await User.findById(id);
+    return foundUser;
+  } catch (err) {
+    throw new Error("getUserById error", { cause: err });
+  }
+};
+
+exports.User = User;
