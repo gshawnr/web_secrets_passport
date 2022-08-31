@@ -1,5 +1,5 @@
 {
-  "name": "Secrets",
+  "name": "secrets",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
@@ -21,6 +21,10 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "author": "GSR",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "none"
+  }
 }
